@@ -11,8 +11,7 @@
 </template>
 
 <script setup>
-import RawLeafletMap from './../components/RawLeafletMap.vue'
-import VueLeafletMap from './../components/VueLeafletMap.vue'
+import RawLeafletMap from './../components/MyRawLeafletMap.vue'
 
 </script>
 

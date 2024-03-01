@@ -96,4 +96,3 @@ const initLeafletMap = () => {
   height: 600px;
 }
 </style>
-
