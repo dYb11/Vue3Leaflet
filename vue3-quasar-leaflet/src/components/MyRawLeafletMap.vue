@@ -32,7 +32,8 @@ onMounted(() => {
 const initLeafletMap = () => {
   // Find div element 'placeholdermap' in html and inject the leaflet map object
   leafletMap.value = L.map('placeholdermap', {
-    center: new L.LatLng(29.630771, 91.186523),
+    crs: L.CRS.EPSG3415,
+    center: new L.LatLng(30.498089, 104.072027),
     zoom: 15
   })
 
@@ -40,10 +41,10 @@ const initLeafletMap = () => {
   // leafletMap.value.setView([52.103839, 4.252742], 13 /* zoom level */)
 
   L.tileLayer('http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
-    maxZoom: 17,
-    attribution: '© OpenStreetMap contributors'
+    maxZoom: 17
   }).addTo(leafletMap.value)
 
+  L.tileLayer.wms('http://127.0.0.1:8080/geoserver/test/wms', { layers: 'roads', format: "image/png", transparent: true }).addTo(leafletMap.value)
   // L.marker([52.103839, 4.252742], { icon: customDivIcon }).addTo(leafletMap.value)
 
   // Add locations
