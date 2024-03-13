@@ -15,6 +15,7 @@ import { nextTick, onMounted, ref } from 'vue'
 import L, { LeafletEventHandlerFn } from 'leaflet'
 import { useMainStore } from './../stores/mainstore'
 import { storeToRefs } from 'pinia'
+import { api } from 'boot/axios'
 
 // import { map, latLng, tileLayer, MapOptions } from 'leaflet'
 const main = useMainStore()
@@ -44,7 +45,7 @@ const initLeafletMap = () => {
     maxZoom: 17
   }).addTo(leafletMap.value)
 
-  L.tileLayer.wms('http://127.0.0.1:8080/geoserver/test/wms', { layers: 'roads', format: 'image/png', transparent: true }).addTo(leafletMap.value)
+  L.tileLayer.wms('http://localhost:8080/geoserver/test/wms', { layers: 'roads', format: 'image/png', transparent: true }).addTo(leafletMap.value)
   // L.marker([52.103839, 4.252742], { icon: customDivIcon }).addTo(leafletMap.value)
 
   // Add locations
@@ -67,16 +68,65 @@ const initLeafletMap = () => {
       // })
     }
   })
-  L.polygon(main.polygon.map(pnt => [pnt.Latitude, pnt.Longitude]), { color: 'red' }).addTo(leafletMap.value)
+  L.polyline(main.polygon.map(pnt => [pnt.Latitude, pnt.Longitude]), { color: 'red' }).addTo(leafletMap.value)
 
   const mypop = L.popup()
   const map = leafletMap.value
   map.on('click', function (e) {
-    mypop
-      .setLatLng(e.latlng)
-      .setContent('你临幸了这个点：<br>' + e.latlng.toString())
-      .openOn(map)
+    console.log(e.latlng)
+    e.latlng.level = 15
+
+    api.get('/juc/s2/getS2Vertex', {
+      params: e.latlng
+    }).then(response => {
+      const res = []
+      const element = response.data
+      const ll = [[element.leftLat, element.leftLng], [element.rightLat, element.rightLng]]
+      L.rectangle(
+        ll,
+        {
+          color: 'red',
+          weight: 1,
+          fillOpacity: 0.5
+        }
+      ).addTo(map)
+    })
+    // mypop
+    //   .setLatLng(e.latlng)
+    //   .setContent('你临幸了这个点：<br>' + e.latlng.toString())
+    //   .openOn(map)
   })
+  const data = { level: 20, id: 319625237 }
+
+  api.get('/juc/s2/getS2ById', {
+    params: data
+  }).then(response => {
+    const res = []
+    response.data.forEach(element => {
+      const ll = [[element.leftLat, element.leftLng], [element.rightLat, element.rightLng]]
+      L.rectangle(
+        ll,
+        {
+          color: 'red',
+          weight: 1,
+          fillOpacity: 0.5
+        }
+      ).addTo(map)
+      console.log(ll)
+    })
+  })
+
+  L.rectangle(
+    [
+      [30.939303715912658, 103.9376021241749],
+      [30.942115279964472, 103.94050278444783]
+    ],
+    {
+      color: 'red',
+      weight: 1,
+      fillOpacity: 0.5
+    }
+  ).addTo(map)
 }
 
 </script>

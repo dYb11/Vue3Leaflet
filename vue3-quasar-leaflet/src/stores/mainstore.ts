@@ -12,39 +12,74 @@ export const useMainStore = defineStore('mainstore', {
   state: (): IMainStore => ({
     locations: [
       {
-        Latitude: 52.103839,
-        Longitude: 4.252742,
+        Latitude: 30.939303715912658,
+        Longitude: 103.9376021241749,
         Title: 'Point 1'
       },
       {
-        Latitude: 52.104085313459706,
-        Longitude: 4.256030458886158,
+        Latitude: 30.942115279964472,
+        Longitude: 103.94050278444783,
         Title: 'Point 2'
       }
 
     ],
     polygon: [
       {
-        Latitude: 52.099738624938254,
-        Longitude: 4.253472755089291
+        Latitude: 30.9399425,
+        Longitude: 103.9387271
       },
       {
-        Latitude: 52.092615424361725,
-        Longitude: 4.263618313481771
+        Latitude: 30.939951,
+        Longitude: 103.9388794
       },
       {
-        Latitude: 52.09879591369889,
-        Longitude: 4.274019642253535
+        Latitude: 30.9399522,
+        Longitude: 103.9389804
       },
       {
-        Latitude: 52.10487081438146,
-        Longitude: 4.263021515928983
+        Latitude: 30.9400008,
+        Longitude: 103.9432387
       },
       {
-        Latitude: 52.099738624938254,
-        Longitude: 4.253472755089291
+        Latitude: 30.9399958,
+        Longitude: 103.9433432
+      },
+      {
+        Latitude: 30.9400301,
+        Longitude: 103.9489516
+      },
+      {
+        Latitude: 30.9400548,
+        Longitude: 103.9524436
+      },
+      {
+        Latitude: 30.9401038,
+        Longitude: 103.9532988
+      },
+      {
+        Latitude: 30.9401606,
+        Longitude: 103.9538005
+      },
+      {
+        Latitude: 30.9402286,
+        Longitude: 103.9541978
+      },
+      {
+        Latitude: 30.9403786,
+        Longitude: 103.9548494
+      },
+      {
+        Latitude: 30.9405711,
+        Longitude: 103.9555777
+      },
+      {
+        Latitude: 30.9407859,
+        Longitude: 103.9562378
+      },
+      {
+        Latitude: 30.9417009,
+        Longitude: 103.9583915
       }
-
     ]
   })
 
