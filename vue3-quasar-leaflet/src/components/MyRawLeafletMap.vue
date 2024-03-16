@@ -71,18 +71,20 @@ const initLeafletMap = () => {
   L.polyline(main.polygon.map(pnt => [pnt.Latitude, pnt.Longitude]), { color: 'red' }).addTo(leafletMap.value)
 
   const mypop = L.popup()
+  let level = 15
   const map = leafletMap.value
   map.on('click', function (e) {
     console.log(e.latlng)
-    e.latlng.level = 15
+    level = level - 1
+    e.latlng.level = level
 
     api.get('/juc/s2/getS2Vertex', {
       params: e.latlng
     }).then(response => {
       const res = []
       const element = response.data
-      const ll = [[element.leftLat, element.leftLng], [element.rightLat, element.rightLng]]
-      L.rectangle(
+      const ll = [[element.lat0, element.lng0], [element.lat1, element.lng1], [element.lat2, element.lng2], [element.lat3, element.lng3]]
+      L.polygon(
         ll,
         {
           color: 'red',
