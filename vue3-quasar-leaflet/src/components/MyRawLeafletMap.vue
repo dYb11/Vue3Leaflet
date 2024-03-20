@@ -3,10 +3,35 @@ Example how to use Leaflet directly
 */
 
 <template>
-  <div id="placeholdermap" class="mapContainer">
-
+<div class="row mapContainer">
+  <div class="col-2">
+    <form @submit.prevent="simulateSubmit" class="q-pa-md">
+    <!-- a simple text field watching for the enter key release -->
+    <q-input
+      filled
+      autogrow
+      color="teal"
+      hint="数组 ts Longitude  Latitude"
+      id="textInput"
+      v-model="textInput"
+    />
+    <div class="row justify-end">
+      <q-btn
+        type="submit"
+        @click="handleSubmit"
+        label="Save"
+        class="q-mt-md"
+        color="teal"
+      >
+        <template v-slot:loading>
+          <q-spinner-facebook />
+        </template>
+      </q-btn>
+    </div>
+  </form>
   </div>
-  <div>Map without vue-leaflet (use leaflet directly)</div>
+  <div id="placeholdermap"  class="col-10">two thirds</div>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -33,7 +58,7 @@ onMounted(() => {
 const initLeafletMap = () => {
   // Find div element 'placeholdermap' in html and inject the leaflet map object
   leafletMap.value = L.map('placeholdermap', {
-    center: new L.LatLng(30.940026, 103.939601),
+    center: new L.LatLng(29.57847, 94.410976),
     zoom: 15
   })
 
@@ -68,36 +93,75 @@ const initLeafletMap = () => {
       // })
     }
   })
-  L.polyline(main.polygon.map(pnt => [pnt.Latitude, pnt.Longitude]), { color: 'red' }).addTo(leafletMap.value)
+  // 渲染线
+  // L.polyline(main.polygon.map(pnt => [pnt.Latitude, pnt.Longitude]), { color: 'red' }).addTo(leafletMap.value)
 
   const mypop = L.popup()
-  let level = 15
+  const level = 14
   const map = leafletMap.value
   map.on('click', function (e) {
     console.log(e.latlng)
-    level = level - 1
+    // level = level - 1
     e.latlng.level = level
 
-    api.get('/juc/s2/getS2Vertex', {
+    // api.get('/juc/s2/getS2Vertex', {
+    //   params: e.latlng
+    // }).then(response => {
+    //   const res = []
+    //   const element = response.data
+    //   const ll = [[element.lat0, element.lng0], [element.lat1, element.lng1], [element.lat2, element.lng2], [element.lat3, element.lng3]]
+    //   L.polygon(
+    //     ll,
+    //     {
+    //       color: 'red',
+    //       weight: 1,
+    //       fillOpacity: 0.5
+    //     }
+    //   ).addTo(map)
+    // })
+
+    // api.get('/juc/s2/getS2Conver', {
+    //   params: e.latlng
+    // }).then(response => {
+    //   const res = []
+    //   response.data.forEach(element => {
+    //     const ll = [[element.lat0, element.lng0], [element.lat1, element.lng1], [element.lat2, element.lng2], [element.lat3, element.lng3]]
+    //     L.polygon(
+    //       ll,
+    //       {
+    //         color: 'red',
+    //         weight: 1,
+    //         fillOpacity: 0.5
+    //       }
+    //     ).addTo(map)
+    //   })
+    // })
+
+    api.get('/juc/s2/getS2Line', {
       params: e.latlng
     }).then(response => {
       const res = []
-      const element = response.data
-      const ll = [[element.lat0, element.lng0], [element.lat1, element.lng1], [element.lat2, element.lng2], [element.lat3, element.lng3]]
-      L.polygon(
-        ll,
-        {
-          color: 'red',
-          weight: 1,
-          fillOpacity: 0.5
-        }
-      ).addTo(map)
+      response.data.forEach(element => {
+        const coordinates = element.coordinates
+        console.log(coordinates)
+
+        L.polyline(coordinates.map(pnt => [pnt.Latitude, pnt.Longitude]), { color: 'green' }).addTo(leafletMap.value)
+      })
     })
+
     // mypop
     //   .setLatLng(e.latlng)
     //   .setContent('你临幸了这个点：<br>' + e.latlng.toString())
     //   .openOn(map)
   })
+
+  // api.get('/match/v1/car/94.410976,29.57847;94.411065,29.578201;94.411305,29.578021;94.413336,29.576781;94.417463,29.574816;94.418486,29.573041;94.424678,29.568275;94.428875,29.562281;94.433153,29.556173?timestamps=1710737329;1710737333;1710737336;1710737354;1710737397;1710737414;1710737474;1710737534;1710737594&geometries=geojson&tidy=true', {
+  // }).then(response => {
+  //   const res = []
+  //   console.log(response.data.matchings[0].geometry.coordinates)
+  //   L.polyline(response.data.matchings[0].geometry.coordinates.map(pnt => [pnt[1], pnt[0]]), { color: 'orange' }).addTo(leafletMap.value)
+  // })
+
   const data = { level: 20, id: 319625237 }
 
   api.get('/juc/s2/getS2ById', {
@@ -105,8 +169,8 @@ const initLeafletMap = () => {
   }).then(response => {
     const res = []
     response.data.forEach(element => {
-      const ll = [[element.leftLat, element.leftLng], [element.rightLat, element.rightLng]]
-      L.rectangle(
+      const ll = [[element.lat0, element.lng0], [element.lat1, element.lng1], [element.lat2, element.lng2], [element.lat3, element.lng3]]
+      L.polygon(
         ll,
         {
           color: 'red',
@@ -129,6 +193,45 @@ const initLeafletMap = () => {
       fillOpacity: 0.5
     }
   ).addTo(map)
+}
+
+const textInput = ref('')
+
+const handleSubmit = () => {
+  console.log('提交的文本是：', textInput.value)
+  let lnglat = ''
+  let ts = ''
+  const data1: { lng: any; lat: any }[] = []
+
+  const data = textInput.value.split('\n')
+  console.log(data)
+  data.forEach(d => {
+    const r = d.split('\t')
+    lnglat = lnglat + r[1] + ',' + r[2] + ';'
+    ts = ts + r[0] + ';'
+    data1.push({ lng: r[1], lat: r[2] })
+  })
+
+  leafletMap.value.setView([data1[0].lat, data1[0].lng], leafletMap.value.getZoom())
+
+  // const data1 = JSON.parse(textInput.value)
+  // data1.forEach((d: { lng: string; lat: string ; ts: string }) => {
+  //   lnglat = lnglat + d.lng + ',' + d.lat + ';'
+  //   ts = ts + d.ts + ';'
+  // })
+  lnglat = lnglat.slice(0, -1)
+  ts = ts.slice(0, -1)
+  console.log(ts)
+  console.log(lnglat)
+
+  L.polyline(data1.map((pnt: { lat: any; lng: any }) => [pnt.lat, pnt.lng]), { color: 'black' }).addTo(leafletMap.value)
+  api.get('/match/v1/car/' + lnglat + '?geometries=geojson&tidy=true', {
+    params: { timestamps: ts }
+  }).then(response => {
+    const res = []
+    console.log(response.data.matchings[0].geometry.coordinates)
+    L.polyline(response.data.matchings[0].geometry.coordinates.map((pnt: any[]) => [pnt[1], pnt[0]]), { color: 'orange' }).addTo(leafletMap.value)
+  })
 }
 
 </script>

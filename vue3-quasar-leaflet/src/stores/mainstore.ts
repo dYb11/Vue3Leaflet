@@ -25,60 +25,40 @@ export const useMainStore = defineStore('mainstore', {
     ],
     polygon: [
       {
-        Latitude: 30.9399425,
-        Longitude: 103.9387271
+        Longitude: 94.410976,
+        Latitude: 29.57847
       },
       {
-        Latitude: 30.939951,
-        Longitude: 103.9388794
+        Longitude: 94.411065,
+        Latitude: 29.578201
       },
       {
-        Latitude: 30.9399522,
-        Longitude: 103.9389804
+        Longitude: 94.411305,
+        Latitude: 29.578021
       },
       {
-        Latitude: 30.9400008,
-        Longitude: 103.9432387
+        Longitude: 94.413336,
+        Latitude: 29.576781
       },
       {
-        Latitude: 30.9399958,
-        Longitude: 103.9433432
+        Longitude: 94.417463,
+        Latitude: 29.574816
       },
       {
-        Latitude: 30.9400301,
-        Longitude: 103.9489516
+        Longitude: 94.418486,
+        Latitude: 29.573041
       },
       {
-        Latitude: 30.9400548,
-        Longitude: 103.9524436
+        Longitude: 94.424678,
+        Latitude: 29.568275
       },
       {
-        Latitude: 30.9401038,
-        Longitude: 103.9532988
+        Longitude: 94.428875,
+        Latitude: 29.562281
       },
       {
-        Latitude: 30.9401606,
-        Longitude: 103.9538005
-      },
-      {
-        Latitude: 30.9402286,
-        Longitude: 103.9541978
-      },
-      {
-        Latitude: 30.9403786,
-        Longitude: 103.9548494
-      },
-      {
-        Latitude: 30.9405711,
-        Longitude: 103.9555777
-      },
-      {
-        Latitude: 30.9407859,
-        Longitude: 103.9562378
-      },
-      {
-        Latitude: 30.9417009,
-        Longitude: 103.9583915
+        Longitude: 94.433153,
+        Latitude: 29.556173
       }
     ]
   })
