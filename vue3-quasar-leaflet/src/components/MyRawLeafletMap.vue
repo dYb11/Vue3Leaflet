@@ -65,12 +65,13 @@ const initLeafletMap = () => {
   // Example how to set center and zoom level (with intellisense)
   // leafletMap.value.setView([52.103839, 4.252742], 13 /* zoom level */)
 
-  L.tileLayer('http://t0.tianditu.com/DataServer?T=vec_w&X={x}&Y={y}&L={z}&tk=eec8c7ee00d8d62dd60a274aa1a1beb5', {
+  // L.tileLayer('http://t0.tianditu.com/DataServer?T=vec_w&X={x}&Y={y}&L={z}&tk=eec8c7ee00d8d62dd60a274aa1a1beb5', {
+  L.tileLayer('http://localhost:28080/tile/{z}/{x}/{y}.png', {
   // L.tileLayer('http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
     maxZoom: 17
   }).addTo(leafletMap.value)
 
-  L.tileLayer.wms('http://localhost:8080/geoserver/test/wms', { layers: 'roads', format: 'image/png', transparent: true }).addTo(leafletMap.value)
+  // L.tileLayer.wms('http://localhost:8080/geoserver/test/wms', { layers: 'roads', format: 'image/png', transparent: true }).addTo(leafletMap.value)
   // L.marker([52.103839, 4.252742], { icon: customDivIcon }).addTo(leafletMap.value)
 
   // Add locations
@@ -212,7 +213,7 @@ const handleSubmit = () => {
     data1.push({ lng: r[1], lat: r[2] })
   })
 
-  leafletMap.value.setView([data1[0].lat, data1[0].lng], leafletMap.value.getZoom())
+  leafletMap.value.setView([data1[data1.length - 1].lat, data1[0].lng], leafletMap.value.getZoom())
 
   // const data1 = JSON.parse(textInput.value)
   // data1.forEach((d: { lng: string; lat: string ; ts: string }) => {
@@ -230,7 +231,7 @@ const handleSubmit = () => {
   }).then(response => {
     const res = []
     console.log(response.data.matchings[0].geometry.coordinates)
-    L.polyline(response.data.matchings[0].geometry.coordinates.map((pnt: any[]) => [pnt[1], pnt[0]]), { color: 'orange' }).addTo(leafletMap.value)
+    L.polyline(response.data.matchings[0].geometry.coordinates.map((pnt: any[]) => [pnt[1], pnt[0]]), { color: 'red' }).addTo(leafletMap.value)
   })
 }
 
@@ -248,7 +249,7 @@ const handleSubmit = () => {
 
 <style scoped>
 .mapContainer {
-  width: 1200px;
-  height: 600px;
+  width: 1600px;
+  height: 800px;
 }
 </style>
