@@ -207,6 +207,37 @@ const handleSubmit = () => {
   const data = textInput.value.split('\n')
   console.log(data)
 
+  graphHopperMatch(data)
+
+  data.forEach(d => {
+    const r = d.split('\t')
+    lnglat = lnglat + r[1] + ',' + r[2] + ';'
+    ts = ts + r[0] + ';'
+    data1.push({ lng: r[1], lat: r[2] })
+  })
+
+  // 重置中心点
+  leafletMap.value.setView([data1[data1.length - 1].lat, data1[0].lng], leafletMap.value.getZoom())
+
+  lnglat = lnglat.slice(0, -1)
+  ts = ts.slice(0, -1)
+  console.log(ts)
+  console.log(lnglat)
+
+  // 画原始轨迹
+  L.polyline(data1.map((pnt: { lat: any; lng: any }) => [pnt.lat, pnt.lng]), { color: 'black' }).addTo(leafletMap.value)
+
+  // osrm
+  // api.get('/match/v1/car/' + lnglat + '?geometries=geojson&tidy=true', {
+  //   params: { timestamps: ts }
+  // }).then(response => {
+  //   const res = []
+  //   console.log(response.data.matchings[0].geometry.coordinates)
+  //   L.polyline(response.data.matchings[0].geometry.coordinates.map((pnt: any[]) => [pnt[1], pnt[0]]), { color: 'red' }).addTo(leafletMap.value)
+  // })
+}
+
+function graphHopperMatch (data) {
   let pp = ''
   data.forEach(d => {
     const r = d.split('\t')
@@ -230,6 +261,7 @@ const handleSubmit = () => {
 
   console.log(requestData)
 
+  // GraphHopper match
   const axiosSettings = {
     method: 'post',
     url: '/match?profile=car&type=json&points_encoded=false',
@@ -248,31 +280,6 @@ const handleSubmit = () => {
     .catch(error => {
       console.error(error)
     })
-
-  data.forEach(d => {
-    const r = d.split('\t')
-    lnglat = lnglat + r[1] + ',' + r[2] + ';'
-    ts = ts + r[0] + ';'
-    data1.push({ lng: r[1], lat: r[2] })
-  })
-
-  leafletMap.value.setView([data1[data1.length - 1].lat, data1[0].lng], leafletMap.value.getZoom())
-
-  lnglat = lnglat.slice(0, -1)
-  ts = ts.slice(0, -1)
-  console.log(ts)
-  console.log(lnglat)
-
-  L.polyline(data1.map((pnt: { lat: any; lng: any }) => [pnt.lat, pnt.lng]), { color: 'black' }).addTo(leafletMap.value)
-
-  // osrm
-  // api.get('/match/v1/car/' + lnglat + '?geometries=geojson&tidy=true', {
-  //   params: { timestamps: ts }
-  // }).then(response => {
-  //   const res = []
-  //   console.log(response.data.matchings[0].geometry.coordinates)
-  //   L.polyline(response.data.matchings[0].geometry.coordinates.map((pnt: any[]) => [pnt[1], pnt[0]]), { color: 'red' }).addTo(leafletMap.value)
-  // })
 }
 
 </script>
