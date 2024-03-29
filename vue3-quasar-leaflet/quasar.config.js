@@ -85,7 +85,8 @@ module.exports = configure(function (/* ctx */) {
     devServer: {
       proxy: {
         '/juc': 'http://172.31.1.50:8888',
-        '/match': 'http://localhost:5000'
+        '/match': 'http://172.31.1.50:8989',
+        '/match/v1': 'http://localhost:5000'
       },
       // https: true
       open: true // opens browser window automatically

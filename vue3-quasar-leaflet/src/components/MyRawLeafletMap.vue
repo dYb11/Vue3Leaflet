@@ -65,8 +65,8 @@ const initLeafletMap = () => {
   // Example how to set center and zoom level (with intellisense)
   // leafletMap.value.setView([52.103839, 4.252742], 13 /* zoom level */)
 
-  // L.tileLayer('http://t0.tianditu.com/DataServer?T=vec_w&X={x}&Y={y}&L={z}&tk=eec8c7ee00d8d62dd60a274aa1a1beb5', {
-  L.tileLayer('http://localhost:28080/tile/{z}/{x}/{y}.png', {
+  L.tileLayer('http://t0.tianditu.com/DataServer?T=vec_w&X={x}&Y={y}&L={z}&tk=eec8c7ee00d8d62dd60a274aa1a1beb5', {
+  // L.tileLayer('http://localhost:28080/tile/{z}/{x}/{y}.png', {
   // L.tileLayer('http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
     maxZoom: 17
   }).addTo(leafletMap.value)
@@ -206,6 +206,49 @@ const handleSubmit = () => {
 
   const data = textInput.value.split('\n')
   console.log(data)
+
+  let pp = ''
+  data.forEach(d => {
+    const r = d.split('\t')
+
+    const node = '<trkpt>' +
+                  '<time>' + r[0] + '000' + '</time>' +
+                  '<lat>' + r[2] + '</lat>' +
+                  '<lon>' + r[1] + '</lon>' +
+                  '</trkpt>'
+    pp = pp + node
+  })
+
+  const requestData = `
+  <Gpx>
+      <trk>
+          <trkseg>` + pp + `</trkseg>
+          <name>My Run</name>
+      </trk>
+  </Gpx>
+  `
+
+  console.log(requestData)
+
+  const axiosSettings = {
+    method: 'post',
+    url: '/match?profile=car&type=json&points_encoded=false',
+    headers: {
+      'Content-Type': 'application/gpx+xml'
+    },
+    data: requestData,
+    timeout: 60000
+  }
+
+  api(axiosSettings)
+    .then(response => {
+      console.log(response.data)
+      L.polyline(response.data.paths[0].points.coordinates.map((pnt: any[]) => [pnt[1], pnt[0]]), { color: 'red' }).addTo(leafletMap.value)
+    })
+    .catch(error => {
+      console.error(error)
+    })
+
   data.forEach(d => {
     const r = d.split('\t')
     lnglat = lnglat + r[1] + ',' + r[2] + ';'
@@ -215,24 +258,21 @@ const handleSubmit = () => {
 
   leafletMap.value.setView([data1[data1.length - 1].lat, data1[0].lng], leafletMap.value.getZoom())
 
-  // const data1 = JSON.parse(textInput.value)
-  // data1.forEach((d: { lng: string; lat: string ; ts: string }) => {
-  //   lnglat = lnglat + d.lng + ',' + d.lat + ';'
-  //   ts = ts + d.ts + ';'
-  // })
   lnglat = lnglat.slice(0, -1)
   ts = ts.slice(0, -1)
   console.log(ts)
   console.log(lnglat)
 
   L.polyline(data1.map((pnt: { lat: any; lng: any }) => [pnt.lat, pnt.lng]), { color: 'black' }).addTo(leafletMap.value)
-  api.get('/match/v1/car/' + lnglat + '?geometries=geojson&tidy=true', {
-    params: { timestamps: ts }
-  }).then(response => {
-    const res = []
-    console.log(response.data.matchings[0].geometry.coordinates)
-    L.polyline(response.data.matchings[0].geometry.coordinates.map((pnt: any[]) => [pnt[1], pnt[0]]), { color: 'red' }).addTo(leafletMap.value)
-  })
+
+  // osrm
+  // api.get('/match/v1/car/' + lnglat + '?geometries=geojson&tidy=true', {
+  //   params: { timestamps: ts }
+  // }).then(response => {
+  //   const res = []
+  //   console.log(response.data.matchings[0].geometry.coordinates)
+  //   L.polyline(response.data.matchings[0].geometry.coordinates.map((pnt: any[]) => [pnt[1], pnt[0]]), { color: 'red' }).addTo(leafletMap.value)
+  // })
 }
 
 </script>
